@@ -2,14 +2,12 @@ import sys
 
 try:
 	import launchpad_py as launchpad
-except ImportError:
-	try:
-		import launchpad
-	except ImportError:
-		sys.exit("error loading launchpad.py")
+except ImportError as e:
+	print("Failed to import launchpad_py:", e)
+	sys.exit("error loading launchpad_py")
 
 import random
-from pygame import time
+import time
 
 
 def main():
@@ -99,7 +97,7 @@ def main():
 	snake = [[3, 5], [4, 5], [5, 5], [6, 5]]
  	
 	while 1:
-		time.wait( 600 )
+		time.sleep(0.6)
 
 		lp.Reset()
   
@@ -155,7 +153,7 @@ def main():
   
 		if is_game_over:
 			break
-	time.wait(1000)
+	time.sleep(1)
 	lp.LedCtrlString( "Game Over!", 0, 63, 0, -1, waitms = 50 )
 
 	print("Quitting might raise a 'Bad Pointer' error (~almost~ nothing to worry about...:).\n\n")
