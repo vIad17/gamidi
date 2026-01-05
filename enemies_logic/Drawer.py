@@ -3,12 +3,8 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from units import Unit
-from Launchpad_Main import LaunchpadInit, GetLP
-from enemies_logic.EnemiesArray import enemies, Enemy
-from enemies_logic.FileReader import ReadFromFile
-
 COLOR_GREEN = [0, 255, 0]
+COLOR_BLACK = [0, 0, 0]
 COLOR_WHITE = [255, 255, 255]
 
 BUTTON_CLEAR = 89
@@ -17,22 +13,21 @@ BUTTON_ROW_2 = 29
 BUTTON_ROW_1 = 39
 BUTTON_ROW_0 = 49
 
-# from AKAI_Main import OnEnemySpawn
+from Launchpad_Main import LaunchpadInit, GetLP
+from enemies_logic.EnemiesArray import enemies, Enemy
+from enemies_logic.FileReader import ReadFromFile
+
+from AKAI_Main import OnEnemySpawn
 # import time
 
 drawing_array = []
-current_enemy: Unit = None
-default_enemy: Unit = Unit(
-      "custom", # Name
-      1, # MaxHP
-      1, # Dmg
-      1000, # move_t
-      True, # do_move
-      1000, # attack_t
-      "", # sprite_path
-      "", # txt_path
-      [255, 0, 0] # color
-    )
+current_enemy: Enemy = None
+default_enemy: Enemy = {
+    "image": drawing_array,
+    "hp": 1,
+    "speed": 1,
+    "color": COLOR_GREEN
+}
 
 def IdToIndex(id : int):
   return (8 - id//10) * 8 + id%10 - 1
@@ -40,8 +35,17 @@ def IdToIndex(id : int):
 def IndexToId(index : int):
   return (8 - index//8) * 10 + index%8 +1
 
+def LaunchpadDrawerInit():
+  global lp
+  lp = GetLP()
+  lp.Reset()
+  lp.LedCtrlXYByRGB(8, 1, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 5, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
 
-def Update():
+def LaunchpadDrawerUpdate():
   global lp
   lp = GetLP()
   input = lp.ButtonStateRaw()
@@ -69,7 +73,6 @@ def _Draw(input):
   
   if _IsEnemyReady():
     current_enemy = default_enemy
-    current_enemy.txt_path = drawing_array
     for enemy in enemies:      
       if len(enemy["image"]) != len(drawing_array):
         continue
@@ -91,37 +94,50 @@ def _HandleInputs(input):
   if input == []:
     return
   
+  lp.LedCtrlXYByRGB(8, 1, COLOR_WHITE)  
+  
   if input[0] == BUTTON_CLEAR:
-    color = COLOR_WHITE
+    # color = COLOR_WHITE
     if input[1] != 0:
       drawing_array.clear()
-      lp.Reset
-      color = COLOR_GREEN
-    else:
-      lp
-  
-  if input[1] != 0:
-    print(input)
-    
-    if input[0] == BUTTON_CLEAR:
-      drawing_array.clear()
       lp.Reset()
-    
-    if _IsEnemyReady():
-      row_inputs = [BUTTON_ROW_0, BUTTON_ROW_1, BUTTON_ROW_2, BUTTON_ROW_3]
-      if input[0] in row_inputs:
+      lp.LedCtrlXYByRGB(8, 1, COLOR_BLACK)
+      # color = COLOR_BLACK
+    # print(color)
+    # lp.LedCtrlXYByRGB(8, 1, color)
+  
+  # if input[1] != 0:
+  #   print(input)
+  
+  lp.LedCtrlXYByRGB(8, 5, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE)
+  lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
+  
+  row_inputs = [BUTTON_ROW_0, BUTTON_ROW_1, BUTTON_ROW_2, BUTTON_ROW_3]
+  if input[0] in row_inputs:
+    if input[1] != 0:
+      if _IsEnemyReady():
         SpawnEnemy(row_inputs.index(input[0]), current_enemy)
         drawing_array.clear()
         lp.Reset()
+      lp.LedCtrlXYByRGB(8, 5, COLOR_WHITE if input[0] != BUTTON_ROW_0 else COLOR_BLACK)
+      lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE if input[0] != BUTTON_ROW_1 else COLOR_BLACK)
+      lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE if input[0] != BUTTON_ROW_2 else COLOR_BLACK)
+      lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE if input[0] != BUTTON_ROW_3 else COLOR_BLACK)
+      lp.LedCtrlXYByRGB(8, 1, COLOR_WHITE)
+    # else:
+    #   lp.LedCtrlXYByRGB(8, 5, COLOR_WHITE)
+    #   lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE)
+    #   lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE)
+    #   lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
         
 
 def _IsEnemyReady():
   global drawing_array
   return len(drawing_array) > 5
 
-def SpawnEnemy(row: int, enemy: Unit):
-  enemy.x = row
-  enemies.y = 0
+def SpawnEnemy(row: int, enemy: Enemy):
   # OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)

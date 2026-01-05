@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 import sys, time
 from AKAI_Main import AKAIinit, AkaiUpdate
 from Launchpad_Main import LaunchpadInit, LaunchpadMain
-from enemies_logic.Drawer import Update, SpawnEnemy
+from enemies_logic.Drawer import LaunchpadDrawerUpdate, LaunchpadDrawerInit, SpawnEnemy
 
 from colorama import init, Fore, Style
 init(autoreset=True)
@@ -15,6 +15,7 @@ AKAIinit()
 # LaunchpadInit()
 # AKAIinit()
 LaunchpadInit()
+LaunchpadDrawerInit()
 
 t_old = 0
 t = time.time() * 1000
@@ -26,7 +27,7 @@ def MainGlobal():
   AkaiUpdate(t,dt)
   # Update()
   # AkaiUpdate(t,dt)
-  Update()
+  LaunchpadDrawerUpdate()
   # LaunchpadMain(t, dt)
 
 

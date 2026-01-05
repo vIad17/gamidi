@@ -1,5 +1,5 @@
 from enemies_logic.FileReader import ReadFromFile
-from typing import List
+from typing import List, TypedDict
 from units import Unit
 
 class Enemy(TypedDict):
@@ -10,13 +10,23 @@ class Enemy(TypedDict):
 
 enemies: List[Enemy] = [
   {
-    "Name" : "Goblin",
-    "image": ReadFromFile("enemy1"),
+    "Name" : "Amogus",
+    "image": ReadFromFile("amogus"),
     "color": [255, 0, 0],
   },
   {
-    "name" : "GoblinB",
-    "image": ReadFromFile("enemy2"),
+    "name" : "Square",
+    "image": ReadFromFile("square"),
+    "color": [255, 153, 0],
+  },
+  {
+    "name" : "Fox",
+    "image": ReadFromFile("fox"),
+    "color": [255, 153, 0],
+  },
+  {
+    "name" : "Ant",
+    "image": ReadFromFile("ant"),
     "color": [255, 153, 0],
   }
 ]
