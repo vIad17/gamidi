@@ -4,13 +4,14 @@ from PIL import Image, ImageDraw, ImageFont
 import sys, time
 from AKAI_Main import AKAIinit, AkaiUpdate
 from Launchpad_Main import LaunchpadInit, LaunchpadMain
+from enemies_logic.Drawer import Update, SpawnEnemy
 
 from colorama import init, Fore, Style
 init(autoreset=True)
 
 app = QCoreApplication([])
 
-AKAIinit()
+# AKAIinit()
 LaunchpadInit()
 
 t_old = 0
@@ -20,8 +21,9 @@ def MainGlobal():
   t_old = t
   t = time.time() * 1000
   dt = t-t_old
-  AkaiUpdate(t,dt)
-  LaunchpadMain(t, dt)
+  # AkaiUpdate(t,dt)
+  Update()
+  # LaunchpadMain(t, dt)
 
 
 
