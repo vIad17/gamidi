@@ -2,8 +2,16 @@ from hardware.akai_fire_controller import AkaiFireController
 from PyQt6.QtCore import QCoreApplication, QTimer
 from PIL import Image, ImageDraw, ImageFont
 import sys, time
+import math
+
+from colorama import init as ColoramaINIT
+from colorama import Fore, Style
+ColoramaINIT(autoreset=True)
+
 
 akai = None
+
+select_x, select_y = -1,-1
 
 def AKAIinit():
   global akai
@@ -51,9 +59,6 @@ def AKAIinit():
 
   akai.set_global_brightness_factor(1.0)
   #endregion: Controller connection
-
-
-
 
 #region OLED
 OLED_WIDTH = 128
@@ -116,6 +121,12 @@ def IMG_empty(white: bool = False):
   color = 1 if white else 0
   return Image.new("1", (OLED_WIDTH, OLED_HEIGHT), color)
 
+def IMG_load(path):
+  img = Image.open(path)
+  img = img.convert("1")
+  img = img.resize((128, 64))
+  return img
+
 def IMG_DrawProgress(img: Image, val: float, x: int = 4, y: int = 52, w: int = 60, h: int = 3, border: int = 1):
   fill_w = float(w) * val
   draw = ImageDraw.Draw(img)
@@ -130,7 +141,8 @@ def IMG_DrawProgress(img: Image, val: float, x: int = 4, y: int = 52, w: int = 6
 
 # CustomFont = ImageFont.load_default()
 # CustomFont = ImageFont.truetype("Res/fonts/Mx437_IBM_EGA_8x14.ttf", 8)
-CustomFont = ImageFont.truetype("Res/fonts/Mx437_Acer710_Mono.ttf", 14)
+CustomFont = ImageFont.truetype("Res/fonts/ARIAL.TTF", 16)
+# CustomFont = ImageFont.truetype("Res/fonts/Mx437_Acer710_Mono.ttf", 14)
 
 def IMG_DrawText(img: Image, text, x:int, y:int, white: bool = True):
   global CustomFont
@@ -140,6 +152,25 @@ def IMG_DrawText(img: Image, text, x:int, y:int, white: bool = True):
 
 # QTimer.singleShot(500, lambda: OLED_OPEN_IMG("Res/VVAD.png", True))
 #endregion OLED
+
+from shop import *
+from units import *
+
+selected_unit = -1
+
+mana_value = 0
+mana_max_value = 12
+last_mana_t = 0
+
+is_shop_open = False
+is_placing_unit = False
+shop_item_i = 0
+shop_items: list[shopEntry] = [
+    ShopKnight(),
+    ShopTower(),
+    ShopLandman(),
+    ShopArcher(),]
+unit_to_place = None
 
 #region Buttons
 LOG_BUTTONS = True
@@ -190,15 +221,34 @@ def on_pattern_button(is_pressed, dir):
   akai.set_pattern_led(dir, is_pressed)
 
 def on_browser_button(is_pressed):
+  global is_shop_open
   pressed_log_string(is_pressed, "Browser")
-  akai.set_browser_led(is_pressed)
+  if is_pressed:
+    is_shop_open = not is_shop_open
+    akai.set_browser_led(is_shop_open)
 
 def on_select_button(is_pressed):
+  global shop_item_i,shop_items, unit_to_place, is_placing_unit, is_shop_open, mana_value
   pressed_log_string(is_pressed, "Select")
+  if(is_pressed and is_shop_open):
+    if mana_value-shop_items[shop_item_i].cost < 0:
+      # TODO ADD MESSAGE
+      return
+    else:
+      unit_to_place = shop_items[shop_item_i].unit_class
+      mana_value = mana_value - shop_items[shop_item_i].cost
+      is_placing_unit = True
+      is_shop_open = False
+    akai.set_browser_led(is_shop_open)
+    
 
 def on_grid_button(is_pressed, dir):
+  global shop_item_i,shop_items
   pressed_log_string(is_pressed, "Grid "+ ("right"if dir==1 else "left"))
   akai.set_grid_led(dir, is_pressed)
+  if(is_pressed):
+    shop_item_i = (shop_item_i + dir) % len(shop_items)
+
 
 def on_bank_button(is_pressed):
   pressed_log_string(is_pressed, "Bank")
@@ -209,50 +259,120 @@ def on_mute_button(is_pressed, ind):
 
 
 def on_pad_button(is_pressed, x, y):
+  global select_x, select_y, selected_unit, is_shop_open
+  global is_placing_unit, units, unit_to_place
   pressed_log_string(is_pressed, f"Pad X:{x:02d} Y:{y:02d}")
   col = 255 if is_pressed else 0
   akai.set_pad_color(x,y,col,col,col)
+  if is_pressed:
+    if is_placing_unit:
+      if x<4: return
+      if x==15: return
+      for index, u in enumerate(units):
+        if u.trySelect(x,y):
+          return
+      new_unit = unit_to_place(x,y)
+      is_placing_unit = False
+      unit_to_place = None
+      units.append(new_unit)
+    else:
+      for index, u in enumerate(units):
+        if u.trySelect(x,y):
+          selected_unit = index
+          is_shop_open = False
+          akai.set_browser_led(is_shop_open)
+      select_x = x
+      select_y = y
 
 def on_control_change(index, value):
+  global shop_item_i,shop_items
   print(f"{Fore.BLUE}[KNOB {index}] {value}")
-   
+  if(index==4):
+    shop_item_i = (shop_item_i + value) % len(shop_items)
 
 def on_midi_button(index, pressed):
   if LOG_BUTTON_MIDI_ID: pressed_log_string(pressed, index)
 #endregion Buttons
 
 
-i = 0
-tPadUpd = 0
+def OnEnemySpawn(row: int, enemy):
+    """
+    row  — линия (0..3), где появился враг
+    enemy — dict / Enemy из enemies_logic, сейчас это просто словарь
+    """
+    print(Fore.YELLOW + f"[AKAI] Enemy spawned in row {row}")
+    print(enemy)
+
+def DrawManaUpdate(mana: int):
+  for i in range(6):
+    akai.set_bottom_row_led(i, mana-2 >= i*2 -1, False, mana-2 >= i*2)
 
 anim_i = 0
 tAnimFrame = 1
 
+# knight = UKnight(5, 1)
+units.append(UKnight(5, 1))
+units.append(UKnight(6, 2))
+units.append(UGoblin(0, 2))
+units.append(UKnight(8, 3))
+
 def AkaiUpdate(t, dt):
-  global i, tPadUpd, tAnimFrame, anim_i
+  global i, tPadUpd, tAnimFrame, anim_i, akai
+  global select_x, select_y, units
+  global mana_value, last_mana_t
+  global is_placing_unit, is_shop_open, shop_items, shop_item_i
+  global castleHP
 
-  if(t - tPadUpd > 50):
-    tPadUpd = t
-    akai.set_pad_color(i,3,0,0,0)
-    akai.set_pad_color(i,1,0,0,0)
-    akai.set_pad_color(15-i,0,0,0,0)
-    akai.set_pad_color(15-i,2,0,0,0)
-    akai.set_mute_status_led(i%4, False)
-    i=(i+1)%16
-    akai.set_pad_color(i,3,255,127,0)
-    akai.set_pad_color(i,1,255,127,0)
-    akai.set_pad_color(15-i,0,255,127,0)
-    akai.set_pad_color(15-i,2,255,127,0)
-    akai.set_mute_status_led(i%4, True)
-    akai.set_preset_led(i%4)
+  num_landman = 0
+  for index, u in enumerate(units):
+    if u.__class__ == ULandman: num_landman = num_landman+1
 
+  
+  # print(5000 - 300*min(num_landman,15))
+
+  if(t-last_mana_t > (5000 - 300*min(num_landman,15))):
+    last_mana_t = t
+    mana_value = min(mana_value+1, mana_max_value)
+
+  if (is_shop_open and math.floor(t/200)%2==0):
+    DrawManaUpdate(mana_value - shop_items[shop_item_i].cost)
+    if(mana_value - shop_items[shop_item_i].cost < 0): akai.set_bottom_row_led(0,True,True,True)
+  else:
+    DrawManaUpdate(mana_value)
+  
+
+  akai.set_pad_color(15,0, 0, 255*(castleHP/3),0)
+  akai.set_pad_color(15,1, 0, 255*(castleHP/3),0)
+  akai.set_pad_color(15,2, 0, 255*(castleHP/3),0)
+  akai.set_pad_color(15,3, 0, 255*(castleHP/3),0)
 
   if(t-tAnimFrame > 40):
     tAnimFrame = t
     anim_i=((anim_i+1)%6572)+1
 
-    img = IMG_empty(False)
-    IMG_DrawProgress(img, val=(anim_i%100)/99, border=1, y= 40)
-    IMG_DrawText(img, "Test string", 5, 20)
+    
+    # IMG_DrawProgress(img, val=(anim_i%100)/99, border=1, y= 40)
+    # IMG_DrawText(img, "Test string", 5, 20)
     # OLED_DRAW_IMG(img)
-    OLED_OPEN_IMG(f"Res/Animation/BadApple/frame_{anim_i:05d}.png")
+    # OLED_OPEN_IMG(f"Res/Animation/BadApple/frame_{anim_i:05d}.png")
+    # OLED_OPEN_IMG(f"Res/knights/unit_knight.png")
+  
+  img = IMG_empty(False)
+  for index, u in enumerate(units):
+    u.drawTile(akai, selected_unit == index, t)
+    if(selected_unit == index):
+      img = u.drawIMG()
+
+  
+  if(is_shop_open):
+    img = IMG_empty(False)
+    img = IMG_load(shop_items[shop_item_i].img_path)
+
+  if(is_placing_unit):
+    img = IMG_empty(False)
+    IMG_DrawText(img, "Разместите\nюнит", 5, 15)
+    pass
+    # akai.set_pad_color(select_x,select_y, 0,0,0)
+
+  OLED_DRAW_IMG(img)
+

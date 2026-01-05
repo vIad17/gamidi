@@ -15,6 +15,8 @@ BUTTON_ROW_3 = 49
 from Launchpad_Main import LaunchpadInit, GetLP
 from enemies_logic.EnemiesArray import enemies, Enemy
 from enemies_logic.FileReader import ReadFromFile
+
+from AKAI_Main import OnEnemySpawn
 # import time
 
 drawing_array = []
@@ -111,6 +113,6 @@ def _IsEnemyReady():
   return len(drawing_array) > 5
 
 def SpawnEnemy(row: int, enemy: Enemy):
-  # TODO: Add spawn to AKAI
+  OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
