@@ -298,10 +298,16 @@ def on_midi_button(index, pressed):
 from enemies_logic.EnemiesArray import *
 
 def OnEnemySpawn(row: int, enemy):
+    global units
     unit_class = unit_classes.get(enemy["Name"])
+
+    print(enemy["Name"])
+    print(unit_class)
+
     if unit_class == None:
-      pass
-    unit_class(0,row)
+      return
+    new_unit = unit_class(0, row)
+    units.append(new_unit)
 
 
 def DrawManaUpdate(mana: int):
