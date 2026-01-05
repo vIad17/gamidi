@@ -6,7 +6,7 @@ from typing import Type
 class shopEntry:
   cost = 1
   img_path = ""
-  unit_class: Type[Unit] | None = None
+  unit_class=None #: Type[Unit] | None = None
 
 class ShopKnight(shopEntry):
   cost = 4

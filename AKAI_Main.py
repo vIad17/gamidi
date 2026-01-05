@@ -153,8 +153,9 @@ def IMG_DrawText(img: Image, text, x:int, y:int, white: bool = True):
 # QTimer.singleShot(500, lambda: OLED_OPEN_IMG("Res/VVAD.png", True))
 #endregion OLED
 
-from shop import *
 from units import *
+from shop import *
+
 
 selected_unit = -1
 
