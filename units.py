@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 from hardware.akai_fire_controller import AkaiFireController
 import math
+from typing import Type
 
 from AKAI_Main import OLED_OPEN_IMG, IMG_DrawProgress, IMG_DrawText,IMG_load
 
@@ -114,6 +115,8 @@ class Unit:
 
 units: list[Unit] = []
 
+
+
 class UKnight(Unit):
   Name ="knight"
   color = (60, 255, 255)
@@ -149,3 +152,6 @@ class UGoblin(Unit):
   sprite_path = "Res/knights/unit_knight.png"
 
   
+unit_classes: dict[str, Type[Unit]] = {
+    "Goblin": UGoblin,
+}

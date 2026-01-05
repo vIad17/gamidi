@@ -295,14 +295,14 @@ def on_midi_button(index, pressed):
   if LOG_BUTTON_MIDI_ID: pressed_log_string(pressed, index)
 #endregion Buttons
 
+from enemies_logic.EnemiesArray import *
 
 def OnEnemySpawn(row: int, enemy):
-    """
-    row  — линия (0..3), где появился враг
-    enemy — dict / Enemy из enemies_logic, сейчас это просто словарь
-    """
-    print(Fore.YELLOW + f"[AKAI] Enemy spawned in row {row}")
-    print(enemy)
+    unit_class = unit_classes.get(enemy["Name"])
+    if unit_class == None:
+      pass
+    unit_class(0,row)
+
 
 def DrawManaUpdate(mana: int):
   for i in range(6):
