@@ -10,7 +10,7 @@ import random
 import time
 
 
-def main():
+def LaunchpadMain(t, dt):
 
 	mode = None
 
