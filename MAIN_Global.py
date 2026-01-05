@@ -12,7 +12,7 @@ init(autoreset=True)
 app = QCoreApplication([])
 
 AKAIinit()
-LaunchpadInit()
+# LaunchpadInit()
 
 t_old = 0
 t = time.time() * 1000
@@ -22,8 +22,7 @@ def MainGlobal():
   t = time.time() * 1000
   dt = t-t_old
   AkaiUpdate(t,dt)
-  Update()
-  # LaunchpadMain(t, dt)
+  # Update()
 
 
 

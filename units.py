@@ -15,18 +15,29 @@ class Unit:
   cost = 1
   move_t = 1000
   do_move = False
+
   last_move_t = -100000
 
   attack_t = 1000
   last_atack_t = -10000
 
   sprite_path = ""
-  color = (255, 255, 255)
+  color = [255, 255, 255]
   def __init__(self, x, y):
     self.HP = self.MaxHP
     self.x = x
     self.y = y
     self.AKAI_Sprite = IMG_load(self.sprite_path)
+
+  def generateSprite(self, data, name) -> Image:
+    img = Image.new("1", (128, 64), 0)
+    draw = ImageDraw.Draw(img)
+    for i in data:
+      x = (i%8)*4 +80
+      y = (math.floor(i/8))*4 +13
+      draw.rectangle([x,y,x+4,y+4], outline=1, fill=1, width=0)
+    IMG_DrawText(img, name, 6, 6)
+    self.AKAI_Sprite = img
 
   def drawIMG(self)-> Image.Image:
     if self.AKAI_Sprite is None:
