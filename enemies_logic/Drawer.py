@@ -1,0 +1,111 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+COLOR_READY_DEFAULT = [0, 255, 0]
+COLOR_PENDING_DEFAULT = [255, 255, 255]
+
+BUTTON_CLEAR = 89
+BUTTON_ROW_0 = 19
+BUTTON_ROW_1 = 29
+BUTTON_ROW_2 = 39
+BUTTON_ROW_3 = 49
+
+from Launchpad_Main import LaunchpadInit
+from EnemiesArray import enemies, Enemy
+from FileReader import ReadFromFile
+import time
+
+lp = None
+drawing_array = []
+current_enemy: Enemy = None
+default_enemy: Enemy = {
+    "image": drawing_array,
+    "hp": 1,
+    "speed": 1,
+    "color": COLOR_READY_DEFAULT
+}
+
+def IdToIndex(id : int):
+  return (8 - id//10) * 8 + id%10 - 1
+
+def IndexToId(index : int):
+  return (8 - index//8) * 10 + index%8 +1
+
+
+def Update():
+  input = lp.ButtonStateRaw()
+  _HandleInputs(input)
+  _Draw(input)
+  
+def _Draw(input):
+  global lp, drawing_array, enemies, current_enemy
+  
+  if input == [] or input[1] == 0 or input[0] % 10 > 8:
+    return
+  
+  selected_index = IdToIndex(input[0])
+  if selected_index in drawing_array:
+    drawing_array.remove(selected_index)
+    lp.LedCtrlXYByCode(selected_index % 8, selected_index // 8 + 1, 0)
+  else:
+    drawing_array.append(selected_index)
+  
+  drawing_array.sort()
+
+  color = [0, 255, 0] if _IsEnemyReady() else [255, 255, 255]
+  for idx in drawing_array:
+    lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, color)
+  
+  if _IsEnemyReady():
+    current_enemy = default_enemy
+    for enemy in enemies:      
+      if len(enemy["image"]) != len(drawing_array):
+        continue
+      
+      deltaIdx = enemy["image"][0] - drawing_array[0]
+      print(enemy["image"])
+      for index, value in enumerate(enemy["image"]):
+        print(deltaIdx, value - drawing_array[index])
+        if deltaIdx != value - drawing_array[index]:
+          break
+        if index == len(enemy["image"]) - 1:
+          current_enemy = enemy
+          for idx in drawing_array:
+            lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, enemy["color"])
+
+def _HandleInputs(input):
+  global lp, drawing_array, current_enemy, drawing_array
+  
+  if input == []:
+    return
+  if input[1] != 0:
+    print(input)
+    
+    if input[0] == BUTTON_CLEAR:
+      drawing_array.clear()
+      lp.Reset()
+    
+    if _IsEnemyReady():
+      row_inputs = [BUTTON_ROW_0, BUTTON_ROW_1, BUTTON_ROW_2, BUTTON_ROW_3]
+      if input[0] in row_inputs:
+        SpawnEnemy(row_inputs.index(input[0]), current_enemy)
+        drawing_array.clear()
+        lp.Reset()
+        
+
+def _IsEnemyReady():
+  global drawing_array
+  return len(drawing_array) > 5
+
+def SpawnEnemy(row: int, enemy: Enemy):
+  # TODO: Add spawn to AKAI
+  print("Enemy has spawned in line " + str(row))
+  print(enemy)
+  
+# lp = LaunchpadInit()
+# lp.Reset()
+# while 1:
+#   Update()
+#   time.sleep(0.01)
