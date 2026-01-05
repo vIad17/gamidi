@@ -3,8 +3,8 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-COLOR_READY_DEFAULT = [0, 255, 0]
-COLOR_PENDING_DEFAULT = [255, 255, 255]
+COLOR_GREEN = [0, 255, 0]
+COLOR_WHITE = [255, 255, 255]
 
 BUTTON_CLEAR = 89
 BUTTON_ROW_0 = 19
@@ -12,19 +12,18 @@ BUTTON_ROW_1 = 29
 BUTTON_ROW_2 = 39
 BUTTON_ROW_3 = 49
 
-from Launchpad_Main import LaunchpadInit
-from EnemiesArray import enemies, Enemy
-from FileReader import ReadFromFile
-import time
+from Launchpad_Main import LaunchpadInit, GetLP
+from enemies_logic.EnemiesArray import enemies, Enemy
+from enemies_logic.FileReader import ReadFromFile
+# import time
 
-lp = None
 drawing_array = []
 current_enemy: Enemy = None
 default_enemy: Enemy = {
     "image": drawing_array,
     "hp": 1,
     "speed": 1,
-    "color": COLOR_READY_DEFAULT
+    "color": COLOR_GREEN
 }
 
 def IdToIndex(id : int):
@@ -35,6 +34,8 @@ def IndexToId(index : int):
 
 
 def Update():
+  global lp
+  lp = GetLP()
   input = lp.ButtonStateRaw()
   _HandleInputs(input)
   _Draw(input)
@@ -80,6 +81,16 @@ def _HandleInputs(input):
   
   if input == []:
     return
+  
+  if input[0] == BUTTON_CLEAR:
+    color = COLOR_WHITE
+    if input[1] != 0:
+      drawing_array.clear()
+      lp.Reset
+      color = COLOR_GREEN
+    else:
+      lp
+  
   if input[1] != 0:
     print(input)
     
@@ -103,9 +114,3 @@ def SpawnEnemy(row: int, enemy: Enemy):
   # TODO: Add spawn to AKAI
   print("Enemy has spawned in line " + str(row))
   print(enemy)
-  
-# lp = LaunchpadInit()
-# lp.Reset()
-# while 1:
-#   Update()
-#   time.sleep(0.01)

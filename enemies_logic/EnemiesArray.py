@@ -1,4 +1,4 @@
-from FileReader import ReadFromFile
+from enemies_logic.FileReader import ReadFromFile
 from typing import TypedDict, List
 
 class Enemy(TypedDict):

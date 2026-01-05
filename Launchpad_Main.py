@@ -82,10 +82,10 @@ def LaunchpadInit():
     if lp.Open():
       print("Launchpad Mk1/S/Mini")
       mode = "Mk1"
-
   if mode is None:
     print("Did not find any Launchpads, meh...")
     return
+  return lp
 
 
 x = 5
@@ -101,7 +101,6 @@ snake = [[3, 5], [4, 5], [5, 5], [6, 5]]
  	
 def LaunchpadMain(t, dt):
   global lp, x, y, x_delta, y_delta, is_snake_eat_apple, is_game_over, snake, apple
-  time.sleep(0.6)
   lp.Reset()
 
   if snake[0][0] < 0 or snake[0][0] > 7 or snake[0][1] < 1 or snake[0][1] > 8:
@@ -144,6 +143,7 @@ def LaunchpadMain(t, dt):
     print(i, snake[i])
   
     lp.LedCtrlXYByCode(snake[i][0], snake[i][1], 17)
+    lp.LedCtrlXYByRGB
 
   snake[0][0] += x_delta
   snake[0][1] += y_delta
@@ -157,6 +157,8 @@ def LaunchpadMain(t, dt):
   if is_game_over:
     pass
 
+def GetLP():
+  return lp
 
 # Gameover
 # lp.LedCtrlString( "Game Over!", 0, 63, 0, -1, waitms = 50 )
