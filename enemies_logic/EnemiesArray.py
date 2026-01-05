@@ -1,23 +1,28 @@
 from enemies_logic.FileReader import ReadFromFile
-from typing import TypedDict, List
+from typing import List
+from units import Unit
 
-class Enemy(TypedDict):
-    image: List[int]
-    hp: int
-    speed: int
-    color: List[int]
-
-enemies: List[Enemy] = [
-  {
-    "image": ReadFromFile("enemy1"),
-    "hp": 1,
-    "speed": 1,
-    "color": [255, 0, 0]
-  },
-  {
-    "image": ReadFromFile("enemy2"),
-    "hp": 1,
-    "speed": 1,
-    "color": [255, 153, 0]
-  }
+enemies: List[Unit] = [
+    Unit(
+      "amogus", # Name
+      30, # MaxHP
+      10, # Dmg
+      1000, # move_t
+      True, # do_move
+      1000, # attack_t
+      ReadFromFile("amogus"), # pxl_sprite_data
+      "amogus", # txt_path
+      [255, 0, 0] # color
+    ),
+    Unit(
+      "square", # Name
+      3, # MaxHP
+      1, # Dmg
+      1000, # move_t
+      True, # do_move
+      1000, # attack_t
+      "", # sprite_path
+      ReadFromFile("square"), # pxl_sprite_data
+      [255, 255, 0] # color
+    ),
 ]

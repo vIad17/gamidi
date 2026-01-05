@@ -21,7 +21,20 @@ class Unit:
   last_atack_t = -10000
 
   sprite_path = ""
+  pxl_sprite_data = []
   color = (255, 255, 255)
+  
+  def __init__ (self, Name, MaxHP, Dmg, move_t, do_move, attack_t, sprite_path, txt_path, color):
+    self.Name = Name
+    self.MaxHP = MaxHP
+    self.Dmg = Dmg
+    self.move_t = move_t
+    self.do_move = do_move
+    self.attack_t = attack_t
+    self.sprite_path = sprite_path
+    self.txt_path = txt_path
+    self.color = color
+  
   def __init__(self, x, y):
     self.HP = self.MaxHP
     self.x = x

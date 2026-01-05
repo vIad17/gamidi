@@ -3,30 +3,36 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-COLOR_GREEN = [0, 255, 0]
-COLOR_WHITE = [255, 255, 255]
-
-BUTTON_CLEAR = 89
-BUTTON_ROW_0 = 19
-BUTTON_ROW_1 = 29
-BUTTON_ROW_2 = 39
-BUTTON_ROW_3 = 49
-
+from units import Unit
 from Launchpad_Main import LaunchpadInit, GetLP
 from enemies_logic.EnemiesArray import enemies, Enemy
 from enemies_logic.FileReader import ReadFromFile
 
-from AKAI_Main import OnEnemySpawn
+COLOR_GREEN = [0, 255, 0]
+COLOR_WHITE = [255, 255, 255]
+
+BUTTON_CLEAR = 89
+BUTTON_ROW_3 = 19
+BUTTON_ROW_2 = 29
+BUTTON_ROW_1 = 39
+BUTTON_ROW_0 = 49
+
+# from AKAI_Main import OnEnemySpawn
 # import time
 
 drawing_array = []
-current_enemy: Enemy = None
-default_enemy: Enemy = {
-    "image": drawing_array,
-    "hp": 1,
-    "speed": 1,
-    "color": COLOR_GREEN
-}
+current_enemy: Unit = None
+default_enemy: Unit = Unit(
+      "custom", # Name
+      1, # MaxHP
+      1, # Dmg
+      1000, # move_t
+      True, # do_move
+      1000, # attack_t
+      "", # sprite_path
+      "", # txt_path
+      [255, 0, 0] # color
+    )
 
 def IdToIndex(id : int):
   return (8 - id//10) * 8 + id%10 - 1
@@ -63,6 +69,7 @@ def _Draw(input):
   
   if _IsEnemyReady():
     current_enemy = default_enemy
+    current_enemy.txt_path = drawing_array
     for enemy in enemies:      
       if len(enemy["image"]) != len(drawing_array):
         continue
@@ -112,7 +119,9 @@ def _IsEnemyReady():
   global drawing_array
   return len(drawing_array) > 5
 
-def SpawnEnemy(row: int, enemy: Enemy):
-  OnEnemySpawn(row, enemy)
+def SpawnEnemy(row: int, enemy: Unit):
+  enemy.x = row
+  enemies.y = 0
+  # OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
