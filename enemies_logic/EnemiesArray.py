@@ -17,56 +17,56 @@ enemies: List[Enemy] = [
   {
     "name" : "Ant",
     "image": ReadFromFile("ant"),
-    "color": [255, 153, 0],
+    "color": [150, 48, 48],
   },
   {
     "name" : "Bull",
     "image": ReadFromFile("bull"),
-    "color": [255, 153, 0],
+    "color": [201, 25, 22],
   },
   {
     "name" : "Dolphin",
     "image": ReadFromFile("dolphin"),
-    "color": [255, 153, 0],
+    "color": [69, 165, 255],
   },
   {
     "name" : "Dragon",
     "image": ReadFromFile("dragon"),
-    "color": [255, 153, 0],
+    "color": [255, 0, 0],
   },
   {
     "name" : "Fireflies",
     "image": ReadFromFile("fireflies"),
-    "color": [255, 153, 0],
+    "color": [59, 255, 235],
   },
   {
     "name" : "Flame",
     "image": ReadFromFile("flame"),
-    "color": [255, 153, 0],
+    "color": [255, 89, 89],
   },
   {
     "name" : "Fox",
     "image": ReadFromFile("fox"),
-    "color": [255, 153, 0],
+    "color": [255, 102, 0],
   },
   {
     "name" : "Eye",
     "image": ReadFromFile("eye"),
-    "color": [255, 153, 0],
+    "color": [191, 0, 255],
   },
   {
     "name" : "Jellyfish",
     "image": ReadFromFile("jellyfish"),
-    "color": [255, 153, 0],
+    "color": [0, 183, 255],
   },
   {
     "name" : "Snake",
     "image": ReadFromFile("snake"),
-    "color": [255, 153, 0],
+    "color": [0, 255, 102],
   },
   {
     "name" : "Turtle",
     "image": ReadFromFile("turtle"),
-    "color": [255, 153, 0],
+    "color": [0, 255, 13],
   }
 ]
