@@ -184,7 +184,7 @@ def _Pulsing(t, dt):
   lerp_value = (math.sin(t/1000*speed) + 1)/2
   print(lerp_value)
   for idx in drawing_array:
-    lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, _LerpColor(_LerpColor(current_enemy["color"], COLOR_BLACK, 0.4), _LerpColor(current_enemy["color"], COLOR_BLACK, 0.95), lerp_value))
+    lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, _LerpColor(_LerpColor(current_enemy["color"], COLOR_BLACK, 0.4), _LerpColor(current_enemy["color"], COLOR_BLACK, 0.9), lerp_value))
 
 def FadeIn():
   pass
@@ -210,7 +210,7 @@ def _IsEnemyReady():
 from AKAI_Main import OnEnemySpawn
 
 def SpawnEnemy(row: int, enemy: Enemy):
-  global moving_line
+  global moving_line, current_enemy
   OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
