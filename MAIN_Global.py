@@ -29,7 +29,7 @@ def MainGlobal():
 
 timer = QTimer()
 timer.timeout.connect(MainGlobal)
-timer.start(10)
+timer.start(1)
 
 
 

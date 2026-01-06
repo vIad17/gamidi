@@ -18,14 +18,13 @@ from Launchpad_Main import LaunchpadInit, GetLP
 from enemies_logic.EnemiesArray import enemies, Enemy
 from enemies_logic.FileReader import ReadFromFile
 
-from AKAI_Main import OnEnemySpawn
 # import time
 
 moving_line = -1
 drawing_array = []
 current_enemy: Enemy = None
 default_enemy: Enemy = {
-    "Name": "Custom",
+    "name": "Custom",
     "image": drawing_array,
     "color": COLOR_GREEN
 }
@@ -208,9 +207,11 @@ def _IsEnemyReady():
   global drawing_array
   return len(drawing_array) > 5
 
+from AKAI_Main import OnEnemySpawn
+
 def SpawnEnemy(row: int, enemy: Enemy):
   global moving_line
-  # OnEnemySpawn(row, enemy)
+  OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
   

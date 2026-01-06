@@ -10,7 +10,7 @@ class Enemy(TypedDict):
 
 enemies: List[Enemy] = [
   {
-    "Name" : "Amogus",
+    "name" : "Amogus",
     "image": ReadFromFile("amogus"),
     "color": [255, 0, 0],
   },

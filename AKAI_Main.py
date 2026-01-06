@@ -162,7 +162,7 @@ from units import *
 from shop import *
 
 
-selected_unit = -1
+selected_unit = None
 
 mana_value = 0
 mana_max_value = 12
@@ -285,9 +285,10 @@ def on_pad_button(is_pressed, x, y):
     else:
       for index, u in enumerate(units):
         if u.trySelect(x,y):
-          selected_unit = index
+          selected_unit = u
           is_shop_open = False
           akai.set_browser_led(is_shop_open)
+          break
       select_x = x
       select_y = y
 
@@ -305,9 +306,9 @@ from enemies_logic.EnemiesArray import *
 
 def OnEnemySpawn(row: int, enemy):
     global units
-    unit_class = unit_classes.get(enemy["Name"])
+    unit_class = unit_classes.get(enemy["name"])
 
-    print(enemy["Name"])
+    print(enemy["name"])
     print(unit_class)
 
     if unit_class == None:
@@ -340,7 +341,7 @@ units.append(UTower(8, 3))
 
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
-  global select_x, select_y, units
+  global select_x, select_y, units, selected_unit
   global mana_value, last_mana_t
   global is_placing_unit, is_shop_open, shop_items, shop_item_i
 
@@ -379,11 +380,15 @@ def AkaiUpdate(t, dt):
     # OLED_OPEN_IMG(f"Res/Animation/BadApple/frame_{anim_i:05d}.png")
     # OLED_OPEN_IMG(f"Res/knights/unit_knight.png")
   
+  if selected_unit is not None and selected_unit not in units:
+    selected_unit = None
+
   img = IMG_empty(False)
-  for index, u in enumerate(units):
-    u.drawTile(akai, selected_unit == index, t)
-    if(selected_unit == index):
-      img = u.drawIMG()
+  for u in units:
+    is_sel = (u is selected_unit)
+    u.drawTile(akai, is_sel, t)
+    if is_sel:
+        img = u.drawIMG()
 
   
   if(is_shop_open):
