@@ -42,18 +42,26 @@ def TimeTick():
   lp.LedCtrlXYByRGB(1, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 1, 0)))
   lp.LedCtrlXYByRGB(0, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 0, 0)))
 
+is_ended = False
+
 def GameOver():
-  lp.Reset()
-  for i in range(8):
-    for j in range(1, 9):
-      lp.LedCtrlPulseXYByCode(i, j, 5)
+  global is_ended
+  # lp.Reset()
+  if not is_ended:
+    is_ended = True
+    for i in range(8):
+      for j in range(1, 9):
+        lp.LedCtrlXYByCode(i, j, 5)
   # lp.LedCtrlString( "Game Over! Game Over! Game Over! Game Over! Game Over!", 255, 0, 0, -1, waitms = 50 )
   
 def Win():
-  lp.Reset()
-  for i in range(8):
-    for j in range(1, 9):
-      lp.LedCtrlPulseXYByCode(i, j, 64)
+  global is_ended
+  # lp.Reset()
+  if not is_ended:
+    is_ended = True
+    for i in range(8):
+      for j in range(1, 9):
+        lp.LedCtrlXYByCode(i, j, 64)
   # lp.LedCtrlString( "You win! You win! You win! You win! You win!", 0, 255, 0, -1, waitms = 50 )
 
 def IdToIndex(id : int):
@@ -67,6 +75,7 @@ def LaunchpadRestart():
   drawing_array.clear()
   moving_line = -1
   current_enemy = default_enemy
+  is_ended = False
   LaunchpadDrawerInit()
   
 def LaunchpadDrawerInit():
