@@ -122,9 +122,13 @@ def IMG_empty(white: bool = False):
   return Image.new("1", (OLED_WIDTH, OLED_HEIGHT), color)
 
 def IMG_load(path):
-  img = Image.open(path)
-  img = img.convert("1")
-  img = img.resize((128, 64))
+  img = None
+  if(path != ""):
+    img = Image.open(path)
+    img = img.convert("1")
+    img = img.resize((128, 64))
+  else:
+    img = IMG_empty()
   return img
 
 def IMG_DrawProgress(img: Image, val: float, x: int = 4, y: int = 52, w: int = 60, h: int = 3, border: int = 1):
@@ -153,6 +157,7 @@ def IMG_DrawText(img: Image, text, x:int, y:int, white: bool = True):
 # QTimer.singleShot(500, lambda: OLED_OPEN_IMG("Res/VVAD.png", True))
 #endregion OLED
 
+import units as units_logic
 from units import *
 from shop import *
 
@@ -314,21 +319,29 @@ def DrawManaUpdate(mana: int):
   for i in range(6):
     akai.set_bottom_row_led(i, mana-2 >= i*2 -1, False, mana-2 >= i*2)
 
+def DrawHpUpdate(hp: int):
+  for i in range(6,10):
+    akai.set_bottom_row_led(i, hp>=(i-5))
+
 anim_i = 0
 tAnimFrame = 1
 
 # knight = UKnight(5, 1)
 units.append(UKnight(5, 1))
-units.append(UKnight(6, 2))
+units.append(UMage(13, 2))
+units.append(UKnight(7, 2))
 units.append(UGoblin(0, 2))
-units.append(UKnight(8, 3))
+units.append(UGoblin(1, 2))
+units.append(UGoblin(2, 2))
+units.append(UGoblin(3, 2))
+units.append(UGoblin(3, 3))
+units.append(UTower(8, 3))
 
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
   global select_x, select_y, units
   global mana_value, last_mana_t
   global is_placing_unit, is_shop_open, shop_items, shop_item_i
-  global castleHP
 
   num_landman = 0
   for index, u in enumerate(units):
@@ -346,12 +359,13 @@ def AkaiUpdate(t, dt):
     if(mana_value - shop_items[shop_item_i].cost < 0): akai.set_bottom_row_led(0,True,True,True)
   else:
     DrawManaUpdate(mana_value)
-  
 
-  akai.set_pad_color(15,0, 0, 255*(castleHP/3),0)
-  akai.set_pad_color(15,1, 0, 255*(castleHP/3),0)
-  akai.set_pad_color(15,2, 0, 255*(castleHP/3),0)
-  akai.set_pad_color(15,3, 0, 255*(castleHP/3),0)
+  akai.set_pad_color(15,0, 0, 255*(units_logic.castleHP/3),0)
+  akai.set_pad_color(15,1, 0, 255*(units_logic.castleHP/3),0)
+  akai.set_pad_color(15,2, 0, 255*(units_logic.castleHP/3),0)
+  akai.set_pad_color(15,3, 0, 255*(units_logic.castleHP/3),0)
+  DrawHpUpdate(units_logic.castleHP)
+
 
   if(t-tAnimFrame > 40):
     tAnimFrame = t

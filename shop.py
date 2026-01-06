@@ -28,4 +28,9 @@ class ShopArcher(shopEntry):
     img_path = "Res/knights/unit_archer.png"
     unit_class = UArcher
 
+class ShopMage(shopEntry):
+   cost = 3
+   img_path  = "Res/knights/unit_archer.png"
+   unit_class = UMage
+
 

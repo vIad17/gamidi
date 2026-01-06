@@ -16,6 +16,8 @@ class Unit:
   cost = 1
   move_t = 1000
   do_move = False
+  is_enemy = False
+  is_projectile = False
 
   last_move_t = -100000
 
@@ -25,17 +27,6 @@ class Unit:
   sprite_path = ""
   color = [255, 255, 255]
   pxl_sprite_data = []
-  
-  def __init__ (self, Name, MaxHP, Dmg, move_t, do_move, attack_t, sprite_path, txt_path, color):
-    self.Name = Name
-    self.MaxHP = MaxHP
-    self.Dmg = Dmg
-    self.move_t = move_t
-    self.do_move = do_move
-    self.attack_t = attack_t
-    self.sprite_path = sprite_path
-    self.txt_path = txt_path
-    self.color = color
   
   def __init__(self, x, y):
     self.HP = self.MaxHP
@@ -72,6 +63,20 @@ class Unit:
 
     return img
 
+  def attackCheck(self,akai: AkaiFireController, t):
+    global units
+    if (t - self.last_atack_t > self.attack_t):
+      tg_x = self.x + (1 if self.do_move else -1)
+      for index, u in enumerate(units):
+          if u.trySelect(tg_x, self.y) and (u.is_enemy != self.is_enemy):
+            self.last_atack_t = t
+            u.HP = u.HP - self.Dmg
+            if u.HP<0: 
+              akai.set_pad_color(tg_x, self.y, 0, 0, 0)
+              units.remove(u)
+              del(u)
+            break
+
   def drawTile(self, akai: AkaiFireController, is_selected: bool, t):
     global units, castleHP
     if self.do_move:
@@ -92,18 +97,7 @@ class Unit:
             units.remove(self)
             del(self)
             return
-
-    if (t - self.last_atack_t > self.attack_t):
-      tg_x = self.x + (1 if self.do_move else -1)
-      for index, u in enumerate(units):
-          if u.trySelect(tg_x, self.y):
-            self.last_atack_t = t
-            u.HP = u.HP - self.Dmg
-            if u.HP<0: 
-              akai.set_pad_color(tg_x, self.y, 0, 0, 0)
-              units.remove(u)
-              del(u)
-            break
+    self.attackCheck(akai, t)
 
     mul = 1
     if (math.floor(t/100)%2 == 0) and is_selected: mul = 0.3
@@ -112,9 +106,84 @@ class Unit:
   def trySelect(self, sel_x, sel_y) -> bool:
     return self.x == sel_x and self.y == sel_y
 
+  def dist_to_enemy(self) -> int:
+    global units
+    dist = 90
+    for index, u in enumerate(units):
+      if u.is_enemy == self.is_enemy: continue 
+      if u.is_projectile: continue
+      if u.y != self.y: continue
+      dist = min(dist, abs(self.x-u.x))
+      if dist == 1: break
+    return dist
 
 units: list[Unit] = []
 
+class UArrow(Unit):
+  move_t = 600
+  color = (180, 180, 180)
+  MaxHP = 90000
+  Dmg = 1
+  is_projectile = True
+  
+
+  def trySelect(self, sel_x, sel_y):
+    return False
+  def drawTile(self, akai, is_selected, t):
+    global units
+    if self.last_move_t<0: self.last_move_t = t
+    if t - self.last_move_t >= self.move_t:
+      self.last_move_t = t
+      akai.set_pad_color(self.x,self.y, 0,0,0)
+      self.x = self.x - 1
+      if self.x < 0:
+        units.remove(self)
+        del(self)
+        return
+    if self.attackCheck(akai, t): return
+
+    mul = 1
+    if (math.floor(t/30)%2 == 0): mul = 0.3
+    akai.set_pad_color(self.x,self.y, self.color[0]*mul, self.color[1]*mul, self.color[2]*mul)
+
+  def attackCheck(self, akai, t):
+    for index, u in enumerate(units):
+      if u.trySelect(self.x, self.y):
+        if u.is_enemy:
+          u.HP = u.HP - self.Dmg
+          if u.HP<0: 
+            akai.set_pad_color(self.x, self.y, 0, 0, 0)
+            units.remove(u)
+            del(u)
+          units.remove(self)
+          del(self)
+          return True
+
+class UMagic(UArrow):
+  def attackCheck(self, akai, t):
+    for index, u in enumerate(units):
+      if u.trySelect(self.x, self.y):
+        if u.is_enemy:
+          akai.set_pad_color(self.x, self.y, 255, 0, 0)
+          u.HP = u.HP - self.Dmg
+          if u.HP<0: 
+            akai.set_pad_color(self.x, self.y, 0, 0, 0)
+            units.remove(u)
+            del(u)
+          for i in range(1,3):
+            akai.set_pad_color(self.x-i, self.y, 255, 0, 0)
+            for index, u2 in enumerate(units):
+              if u2.trySelect(self.x-i, self.y):
+                if u2.is_enemy:
+                  u2.HP = u2.HP - self.Dmg
+                  if u2.HP<0: 
+                    akai.set_pad_color(self.x-i, self.y, 0, 0, 0)
+                    units.remove(u2)
+                    del(u2)
+            akai.set_pad_color(self.x-i, self.y, 0, 0, 0)
+          units.remove(self)
+          del(self)
+          return True
 
 
 class UKnight(Unit):
@@ -125,13 +194,13 @@ class UKnight(Unit):
 
 class UTower(Unit):
   Name ="Tower"
-  color = (20, 25, 75)
+  color = (20, 35, 105)
   MaxHP = 10
   Dmg = 0
   sprite_path = "Res/knights/unit_tower.png"
 
 class ULandman(Unit):
-  Name ="Tower"
+  Name ="Landman"
   color = (255, 255, 25)
   MaxHP = 1
   Dmg = 0
@@ -139,13 +208,41 @@ class ULandman(Unit):
 
 class UArcher(Unit):
   Name ="Archer"
-  color = (255, 255, 25)
+  color = (30, 150, 30)
   MaxHP = 3
-  Dmg = 2
+  Dmg = 0
+  attack_t = 4000
   sprite_path = "Res/knights/unit_archer.png"
+
+  def attackCheck(self, akai, t):
+    global units
+    if (t - self.last_atack_t > self.attack_t):
+      self.last_atack_t = t
+      new_projectile = UArrow(self.x -1, self.y)
+      units.append(new_projectile)
+
+
+class UMage(Unit):
+  Name ="Mage"
+  color = (80, 150, 30)
+  MaxHP = 3
+  Dmg = 0
+  attack_t = 6000
+  sprite_path = "Res/knights/unit_archer.png"
+
+  def attackCheck(self, akai, t):
+    global units
+    d = self.dist_to_enemy()
+    if (d < 5):
+      if (t - self.last_atack_t > self.attack_t):
+        self.last_atack_t = t
+        new_projectile = UMagic(self.x -1, self.y)
+        units.append(new_projectile)
+
 
 
 class UGoblin(Unit):
+  is_enemy = True
   do_move = True
   move_t = 3000
   color = (255, 60, 255)
