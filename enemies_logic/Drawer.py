@@ -51,9 +51,9 @@ def GameOver():
   
 def Win():
   lp.Reset()
-for i in range(8):
+  for i in range(8):
     for j in range(1, 9):
-        lp.LedCtrlFlashXYByCode(i, j, 12)
+      lp.LedCtrlFlashXYByCode(i, j, 12)
   # lp.LedCtrlString( "You win! You win! You win! You win! You win!", 0, 255, 0, -1, waitms = 50 )
 
 def IdToIndex(id : int):
@@ -146,15 +146,15 @@ def _Draw(input):
 
 def _HandleGameEndInputs(input):
   global lp
+
+  lp.LedCtrlFlashByCode(BUTTON_CLEAR, 100)
   
   if input == []:
     return
   
-  lp.LedCtrlFlashByCode(BUTTON_CLEAR, 100)
-  
   if input[0] == BUTTON_CLEAR:
-    LaunchpadRestart()
-    #TODO: do restart
+    # LaunchpadRestart()
+    GameState.restart()
   
   
 

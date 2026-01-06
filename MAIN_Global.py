@@ -2,9 +2,9 @@ from hardware.akai_fire_controller import AkaiFireController
 from PyQt6.QtCore import QCoreApplication, QTimer
 from PIL import Image, ImageDraw, ImageFont
 import sys, time
-from AKAI_Main import AKAIinit, AkaiUpdate
+from AKAI_Main import AKAIinit, AkaiUpdate, AkaiRestart
 from Launchpad_Main import LaunchpadInit, LaunchpadMain
-from enemies_logic.Drawer import LaunchpadDrawerUpdate, LaunchpadDrawerInit, SpawnEnemy
+from enemies_logic.Drawer import LaunchpadDrawerUpdate, LaunchpadDrawerInit, SpawnEnemy, LaunchpadRestart
 
 from colorama import init, Fore, Style
 
@@ -25,6 +25,11 @@ def MainGlobal():
   t_old = t
   t = time.time() * 1000
   dt = t-t_old
+
+  if(GameState.request_restart):
+    GameState.request_restart = False
+    LaunchpadRestart()
+    AkaiRestart()
 
   GameState.Update(t,dt)
   AkaiUpdate(t,dt)
