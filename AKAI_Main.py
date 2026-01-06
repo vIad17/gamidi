@@ -313,7 +313,11 @@ def OnEnemySpawn(row: int, enemy):
 
     if unit_class == None:
       return
-    new_unit = unit_class(0, row)
+    new_unit = None
+    if unit_class == UCustom:
+      new_unit = UCustom(0, row, enemy["image"])
+    else:
+      new_unit = unit_class(0, row)
     units.append(new_unit)
 
 

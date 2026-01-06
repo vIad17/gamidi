@@ -54,11 +54,11 @@ class Unit:
     for i in range(self.Dmg):
       x = 30+i*8
       y = 28
-      draw.rectangle([x, y, x+5, y+5], outline=1, fill=1, width=0)
+      # draw.rectangle([x, y, x+5, y+5], outline=1, fill=1, width=0)
     for i in range(self.MaxHP):
       x = 30+i*8
       y = 38
-      draw.rectangle([x, y, x+5, y+5], outline=1, fill=1, width=0)
+      # draw.rectangle([x, y, x+5, y+5], outline=1, fill=1, width=0)
     IMG_DrawProgress(img, self.HP/self.MaxHP, 8, 52, 70,3, 1)
 
     return img
@@ -342,6 +342,20 @@ class UTurtle(Unit):
     move_t = 3000
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_turtle.png"
+
+class UCustom(Unit):
+  is_enemy= True
+  do_move = True
+  Dmg = 1
+  MaxHP = 1
+  move_t = 6000
+  color = (255, 153, 0)
+
+  def __init__(self, x, y, data):
+    super().__init__(x, y)
+    self.AKAI_Sprite = self.generateSprite(data, "???")
+
+
   
 unit_classes: dict[str, Type[Unit]] = {
     "Goblin": UGoblin,
