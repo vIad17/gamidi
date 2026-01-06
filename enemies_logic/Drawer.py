@@ -1,5 +1,6 @@
 import sys
 import os
+import math
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -20,12 +21,12 @@ from enemies_logic.FileReader import ReadFromFile
 from AKAI_Main import OnEnemySpawn
 # import time
 
+moving_line = -1
 drawing_array = []
 current_enemy: Enemy = None
 default_enemy: Enemy = {
+    "Name": "Custom",
     "image": drawing_array,
-    "hp": 1,
-    "speed": 1,
     "color": COLOR_GREEN
 }
 
@@ -45,12 +46,24 @@ def LaunchpadDrawerInit():
   lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE)
   lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
 
-def LaunchpadDrawerUpdate():
-  global lp
+def LaunchpadDrawerUpdate(t, dt):
+  # print(t, dt)
+  global lp, current_enemy, default_enemy, moving_line
   lp = GetLP()
   input = lp.ButtonStateRaw()
   _HandleInputs(input)
-  _Draw(input)
+
+  if _IsEnemyReady() and moving_line != -1:
+    _MoveToBattle(t, dt)
+    return
+  
+  if not _IsEnemyReady() or (moving_line == -1 and current_enemy == default_enemy):
+    _Draw(input)
+  
+  if _IsEnemyReady() and current_enemy != default_enemy and moving_line == -1:
+    _Pulsing(t, dt)
+    
+
   
 def _Draw(input):
   global lp, drawing_array, enemies, current_enemy
@@ -78,18 +91,19 @@ def _Draw(input):
         continue
       
       deltaIdx = enemy["image"][0] - drawing_array[0]
-      print(enemy["image"])
+      # print(enemy["image"])
       for index, value in enumerate(enemy["image"]):
-        print(deltaIdx, value - drawing_array[index])
+        # print(deltaIdx, value - drawing_array[index])
         if deltaIdx != value - drawing_array[index]:
           break
         if index == len(enemy["image"]) - 1:
           current_enemy = enemy
-          for idx in drawing_array:
-            lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, enemy["color"])
+          # for idx in drawing_array:
+          #   # lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, enemy["color"])
+          #   lp.LedCtrlPulseXYByCode(idx % 8, idx // 8 + 1, 12)
 
 def _HandleInputs(input):
-  global lp, drawing_array, current_enemy, drawing_array
+  global lp, drawing_array, current_enemy, drawing_array, moving_line
   
   if input == []:
     return
@@ -117,10 +131,12 @@ def _HandleInputs(input):
   row_inputs = [BUTTON_ROW_0, BUTTON_ROW_1, BUTTON_ROW_2, BUTTON_ROW_3]
   if input[0] in row_inputs:
     if input[1] != 0:
+      # if _IsEnemyReady():
+        # SpawnEnemy(row_inputs.index(input[0]), current_enemy)
+        # drawing_array.clear()
+        # lp.Reset()
       if _IsEnemyReady():
-        SpawnEnemy(row_inputs.index(input[0]), current_enemy)
-        drawing_array.clear()
-        lp.Reset()
+        moving_line = row_inputs.index(input[0])
       lp.LedCtrlXYByRGB(8, 5, COLOR_WHITE if input[0] != BUTTON_ROW_0 else COLOR_BLACK)
       lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE if input[0] != BUTTON_ROW_1 else COLOR_BLACK)
       lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE if input[0] != BUTTON_ROW_2 else COLOR_BLACK)
@@ -131,13 +147,74 @@ def _HandleInputs(input):
     #   lp.LedCtrlXYByRGB(8, 6, COLOR_WHITE)
     #   lp.LedCtrlXYByRGB(8, 7, COLOR_WHITE)
     #   lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
-        
+
+prev_t = 0
+temp_img = []
+
+def _MoveToBattle(t, dt):
+  global lp, current_enemy, prev_t
+  speed = 3
+  # min_distant_to_end = 8
+  # for idx in current_enemy["image"]:
+  #   distand_to_end = 7 - idx%8
+  #   if distand_to_end < min_distant_to_end:
+  #     min_distant_to_end = distand_to_end
+  cur_t = int(t*speed/1000)
+  print(drawing_array)
+  if prev_t != cur_t:
+    prev_t = cur_t
+    print(cur_t)
+    temp_img = drawing_array
+    for i, idx in enumerate(temp_img):
+      lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, COLOR_BLACK)
+      if idx % 8 + 1 < 8:
+        temp_img[i] += 1
+      else:
+        temp_img[i] = -1
+    temp_img = [idx for idx in temp_img if idx != -1]
+    # print(temp_img)
+    for i, idx in enumerate(temp_img):
+      lp.LedCtrlXYByRGB(temp_img[i] % 8, temp_img[i] // 8 + 1, current_enemy["color"])
+    if temp_img == []:
+      SpawnEnemy(moving_line, current_enemy)
+      # drawing_array.clear()
+      
+def _Pulsing(t, dt):
+  global current_enemy, lp
+  speed = 7
+  lerp_value = (math.sin(t/1000*speed) + 1)/2
+  print(lerp_value)
+  for idx in drawing_array:
+    lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, _LerpColor(_LerpColor(current_enemy["color"], COLOR_BLACK, 0.4), _LerpColor(current_enemy["color"], COLOR_BLACK, 0.95), lerp_value))
+
+def FadeIn():
+  pass
+
+def _Lerp(a: float, b: float, t: float) -> int:
+  return int((1 - t) * a + t * b)
+
+def ease_in_out_cubic(a: float, b: float, t: float) -> int:
+    eased_t = math.sin((t * math.pi) / 2)
+    return int(a + (b - a) * eased_t)
+
+def _LerpColor(a: list[int], b: list[int], t: float):
+  return [_Lerp(a[0], b[0], t), _Lerp(a[1], b[1], t), _Lerp(a[2], b[2], t)]
+
+def _EasingColor(a: list[int], b: list[int], t: float):
+  return [ease_in_out_cubic(a[0], b[0], t), ease_in_out_cubic(a[1], b[1], t), ease_in_out_cubic(a[2], b[2], t)]
+
 
 def _IsEnemyReady():
   global drawing_array
   return len(drawing_array) > 5
 
 def SpawnEnemy(row: int, enemy: Enemy):
+  global moving_line
   # OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
+  
+  drawing_array.clear()
+  current_enemy = default_enemy
+  moving_line = -1
+  
