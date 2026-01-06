@@ -1,6 +1,7 @@
 import sys
 import os
 import math
+import global_game_state as GameState
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,6 +30,26 @@ default_enemy: Enemy = {
     "color": COLOR_GREEN
 }
 
+def TimeTick():
+  global lp
+  segments_left = GameState.game_time_left/GameState.GAME_LENGTH * 8
+  lp.LedCtrlXYByRGB(7, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 7, 0)))
+  lp.LedCtrlXYByRGB(6, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 6, 0)))
+  lp.LedCtrlXYByRGB(5, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 5, 0)))
+  lp.LedCtrlXYByRGB(4, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 4, 0)))
+  lp.LedCtrlXYByRGB(3, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 3, 0)))
+  lp.LedCtrlXYByRGB(2, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 2, 0)))
+  lp.LedCtrlXYByRGB(1, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 1, 0)))
+  lp.LedCtrlXYByRGB(0, 0, _LerpColor(COLOR_GREEN, COLOR_BLACK, 1-max(segments_left - 0, 0)))
+
+def GameOver():
+  lp.Reset()
+  lp.LedCtrlString( "Game Over! Game Over! Game Over! Game Over! Game Over!", 255, 0, 0, -1, waitms = 50 )
+  
+def Win():
+  lp.Reset()
+  lp.LedCtrlString( "You win! You win! You win! You win! You win!", 0, 255, 0, -1, waitms = 50 )
+
 def IdToIndex(id : int):
   return (8 - id//10) * 8 + id%10 - 1
 
@@ -48,6 +69,14 @@ def LaunchpadDrawerInit():
 def LaunchpadDrawerUpdate(t, dt):
   # print(t, dt)
   global lp, current_enemy, default_enemy, moving_line
+  
+  if GameState.is_game_end:
+    if GameState.win_player_index == 0:
+      Win()
+    else:
+      GameOver()
+    return
+  
   lp = GetLP()
   input = lp.ButtonStateRaw()
   _HandleInputs(input)
@@ -62,7 +91,7 @@ def LaunchpadDrawerUpdate(t, dt):
   if _IsEnemyReady() and current_enemy != default_enemy and moving_line == -1:
     _Pulsing(t, dt)
     
-
+  TimeTick()
   
 def _Draw(input):
   global lp, drawing_array, enemies, current_enemy
