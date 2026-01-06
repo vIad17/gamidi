@@ -5,6 +5,7 @@ import global_game_state as GameState
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+COLOR_GREEN_2 = [139, 247, 144]
 COLOR_GREEN = [0, 255, 0]
 COLOR_BLACK = [0, 0, 0]
 COLOR_WHITE = [255, 255, 255]
@@ -27,7 +28,7 @@ current_enemy: Enemy = None
 default_enemy: Enemy = {
     "name": "Custom",
     "image": drawing_array,
-    "color": COLOR_GREEN
+    "color": COLOR_GREEN_2
 }
 
 def TimeTick():
