@@ -28,11 +28,13 @@ class Unit:
   color = [255, 255, 255]
   pxl_sprite_data = []
   
-  def __init__(self, x, y):
+  def __init__(self, x, y, col_r=-1, col_g=-1, col_b=-1 ):
     self.HP = self.MaxHP
     self.x = x
     self.y = y
     self.AKAI_Sprite = IMG_load(self.sprite_path)
+    if not(col_r==-1):
+      self.color = [col_r,col_g,col_b]
 
   def generateSprite(self, data, name) -> Image:
     img = Image.new("1", (128, 64), 0)
@@ -400,7 +402,7 @@ class UCustom(Unit):
     # self.HP = self.MaxHP
     # self.x = x
     # self.y = y
-    super().__init__(x, y)
+    super().__init__(x, y, 255, 153, 0)
     print("data is: ",data)
     self.generateSprite(data, "???")
 

@@ -308,9 +308,11 @@ def on_midi_button(index, pressed):
 
 from enemies_logic.EnemiesArray import *
 
-def OnEnemySpawn(row: int, enemy):
+def OnEnemySpawn(row: int, enemy: Enemy):
     global units
     unit_class = unit_classes.get(enemy["name"])
+
+    col = enemy["color"]
 
     print(enemy["name"])
     print(unit_class)
@@ -321,7 +323,7 @@ def OnEnemySpawn(row: int, enemy):
     if unit_class == UCustom:
       new_unit = UCustom(0, row, enemy["image"])
     else:
-      new_unit = unit_class(0, row)
+      new_unit = unit_class(0, row, col[0], col[1], col[2])
     units.append(new_unit)
 
 
@@ -337,15 +339,18 @@ anim_i = 0
 tAnimFrame = 1
 
 # knight = UKnight(5, 1)
-units.append(UKnight(5, 1))
-units.append(UMage(13, 2))
-units.append(UKnight(7, 2))
-units.append(UGoblin(0, 2))
-units.append(UGoblin(1, 2))
-units.append(UGoblin(2, 2))
-units.append(UGoblin(3, 2))
-units.append(UGoblin(3, 3))
-units.append(UTower(8, 3))
+# units.append(UKnight(5, 1))
+# units.append(UMage(13, 2))
+# units.append(UKnight(7, 2))
+# units.append(UGoblin(0, 2))
+# units.append(UGoblin(1, 2))
+# units.append(UGoblin(2, 2))
+# units.append(UGoblin(3, 2))
+# units.append(UGoblin(3, 3))
+# units.append(UTower(4, 3))
+# units.append(UTower(4, 2))
+# units.append(UTower(4, 1))
+# units.append(UTower(4, 0))
 
 def AkaiRestart():
   global select_x, select_y, units, selected_unit
@@ -362,6 +367,10 @@ def AkaiRestart():
   selected_unit = None
   units_logic.castleHP = 3
   akai.clear_all_pads()
+  # units.append(UTower(4, 3))
+  # units.append(UTower(4, 2))
+  # units.append(UTower(4, 1))
+  # units.append(UTower(4, 0))
 
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
