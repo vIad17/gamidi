@@ -150,33 +150,36 @@ def _HandleInputs(input):
 prev_t = 0
 temp_img = []
 
+prev_t = 0
+temp_img = []
+
 def _MoveToBattle(t, dt):
-  global lp, current_enemy, prev_t
+  global lp, current_enemy, prev_t, temp_img
   speed = 3
-  # min_distant_to_end = 8
-  # for idx in current_enemy["image"]:
-  #   distand_to_end = 7 - idx%8
-  #   if distand_to_end < min_distant_to_end:
-  #     min_distant_to_end = distand_to_end
-  cur_t = int(t*speed/1000)
-  print(drawing_array)
+  cur_t = int(t * speed / 1000)
+
   if prev_t != cur_t:
     prev_t = cur_t
-    print(cur_t)
-    temp_img = drawing_array
+
+    # инициализируем temp_img один раз, в начале анимации
+    if not temp_img:
+      temp_img = drawing_array.copy()
+
     for i, idx in enumerate(temp_img):
       lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, COLOR_BLACK)
       if idx % 8 + 1 < 8:
         temp_img[i] += 1
       else:
         temp_img[i] = -1
+
     temp_img = [idx for idx in temp_img if idx != -1]
-    # print(temp_img)
-    for i, idx in enumerate(temp_img):
-      lp.LedCtrlXYByRGB(temp_img[i] % 8, temp_img[i] // 8 + 1, current_enemy["color"])
-    if temp_img == []:
+
+    for idx in temp_img:
+      lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, current_enemy["color"])
+
+    if not temp_img:
       SpawnEnemy(moving_line, current_enemy)
-      # drawing_array.clear()
+      temp_img = []
       
 def _Pulsing(t, dt):
   global current_enemy, lp
@@ -210,7 +213,7 @@ def _IsEnemyReady():
 from AKAI_Main import OnEnemySpawn
 
 def SpawnEnemy(row: int, enemy: Enemy):
-  global moving_line, current_enemy
+  global moving_line, current_enemy, default_enemy
   OnEnemySpawn(row, enemy)
   print("Enemy has spawned in line " + str(row))
   print(enemy)
