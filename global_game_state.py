@@ -14,7 +14,7 @@ def Update(t, dt):
   global _started_time, GAME_LENGTH, current_game_time, game_time_left, is_game_end, win_player_index
   if(_started_time<0): _started_time = t
 
-  current_game_time = _started_time - t
+  current_game_time = t - _started_time
   game_time_left = max(0, GAME_LENGTH-current_game_time)
 
   if(game_time_left <= 0) and not is_game_end:
