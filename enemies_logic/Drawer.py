@@ -46,9 +46,9 @@ is_ended = False
 
 def GameOver():
   global is_ended
-  # lp.Reset()
   if not is_ended:
     is_ended = True
+    lp.Reset()
     for i in range(8):
       for j in range(1, 9):
         lp.LedCtrlXYByCode(i, j, 5)
@@ -56,8 +56,8 @@ def GameOver():
   
 def Win():
   global is_ended
-  # lp.Reset()
   if not is_ended:
+    lp.Reset()
     is_ended = True
     for i in range(8):
       for j in range(1, 9):
@@ -71,7 +71,7 @@ def IndexToId(index : int):
   return (8 - index//8) * 10 + index%8 +1
 
 def LaunchpadRestart():
-  global drawing_array, moving_line, current_enemy
+  global drawing_array, moving_line, current_enemy, is_ended
   drawing_array.clear()
   moving_line = -1
   current_enemy = default_enemy
@@ -89,7 +89,7 @@ def LaunchpadDrawerInit():
   lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
 
 def LaunchpadDrawerUpdate(t, dt):
-  global lp, current_enemy, default_enemy, moving_line
+  global lp, current_enemy, default_enemy, moving_line, is_ended
   
   lp = GetLP()
   input = lp.ButtonStateRaw()
@@ -156,7 +156,7 @@ def _Draw(input):
 def _HandleGameEndInputs(input):
   global lp
 
-  lp.LedCtrlFlashByCode(BUTTON_CLEAR, 100)
+  lp.LedCtrlFlashByCode(BUTTON_CLEAR, 3)
   
   if input == []:
     return
@@ -251,7 +251,7 @@ def _Pulsing(t, dt):
   global current_enemy, lp
   speed = 7
   lerp_value = (math.sin(t/1000*speed) + 1)/2
-  print(lerp_value)
+  # print(lerp_value)
   for idx in drawing_array:
     lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, _LerpColor(_LerpColor(current_enemy["color"], COLOR_BLACK, 0.4), _LerpColor(current_enemy["color"], COLOR_BLACK, 0.9), lerp_value))
 
