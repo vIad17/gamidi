@@ -224,11 +224,11 @@ class UArcher(Unit):
 
 class UMage(Unit):
   Name ="Mage"
-  color = (80, 150, 30)
+  color = (120, 30, 250)
   MaxHP = 3
   Dmg = 0
   attack_t = 6000
-  sprite_path = "Res/knights/unit_archer.png"
+  sprite_path = "Res/knights/unit_mage.png"
 
   def attackCheck(self, akai, t):
     global units
@@ -248,7 +248,113 @@ class UGoblin(Unit):
   color = (255, 60, 255)
   sprite_path = "Res/knights/unit_knight.png"
 
+class UAmogus(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 0, 0)
+    sprite_path = "Res/enemies/IMG_Amogus.png"
+
+
+class UAnt(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_ant.png"
+
+
+class UBull(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_bull.png"
+
+
+class UDolphin(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_dolphin.png"
+
+
+class UDragon(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_dragon.png"
+
+
+class UFireflies(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_fireflies.png"
+
+
+class UFlame(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_flame.png"
+
+
+class UFox(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_fox.png"
+
+
+class UEye(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_eye.png"
+
+
+class UJellyfish(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_jellyfish.png"
+
+
+class USnake(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_snake.png"
+
+
+class UTurtle(Unit):
+    is_enemy = True
+    do_move = True
+    move_t = 3000
+    color = (255, 153, 0)
+    sprite_path = "Res/enemies/IMG_turtle.png"
   
 unit_classes: dict[str, Type[Unit]] = {
     "Goblin": UGoblin,
+    "Amogus": UAmogus,
+    "Ant": UAnt,
+    "Bull": UBull,
+    "Dolphin": UDolphin,
+    "Dragon": UDragon,
+    "Fireflies": UFireflies,
+    "Flame": UFlame,
+    "Fox": UFox,
+    "Eye": UEye,
+    "Jellyfish": UJellyfish,
+    "Snake": USnake,
+    "Turtle": UTurtle,
 }

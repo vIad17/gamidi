@@ -172,10 +172,11 @@ is_shop_open = False
 is_placing_unit = False
 shop_item_i = 0
 shop_items: list[shopEntry] = [
+    ShopLandman(),
     ShopKnight(),
     ShopTower(),
-    ShopLandman(),
-    ShopArcher(),]
+    ShopArcher(),
+    ShopMage()]
 unit_to_place = None
 
 #region Buttons
