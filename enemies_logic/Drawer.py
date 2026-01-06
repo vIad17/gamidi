@@ -44,11 +44,17 @@ def TimeTick():
 
 def GameOver():
   lp.Reset()
-  lp.LedCtrlString( "Game Over! Game Over! Game Over! Game Over! Game Over!", 255, 0, 0, -1, waitms = 50 )
+  for i in range(8):
+    for j in range(1, 9):
+      lp.LedCtrlFlashXYByCode(i, j, 20)
+  # lp.LedCtrlString( "Game Over! Game Over! Game Over! Game Over! Game Over!", 255, 0, 0, -1, waitms = 50 )
   
 def Win():
   lp.Reset()
-  lp.LedCtrlString( "You win! You win! You win! You win! You win!", 0, 255, 0, -1, waitms = 50 )
+for i in range(8):
+    for j in range(1, 9):
+        lp.LedCtrlFlashXYByCode(i, j, 12)
+  # lp.LedCtrlString( "You win! You win! You win! You win! You win!", 0, 255, 0, -1, waitms = 50 )
 
 def IdToIndex(id : int):
   return (8 - id//10) * 8 + id%10 - 1
