@@ -4,3 +4,4 @@ myenv/
 */__pycache__/*
 /__pycache__/*
 *.pyc
+__pycache__/AKAI_Main.cpython-311.pyc
