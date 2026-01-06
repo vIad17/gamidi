@@ -356,8 +356,8 @@ class UCustom(Unit):
     # self.x = x
     # self.y = y
     super().__init__(x, y)
-    # print("data is: ",data)
-    self.AKAI_Sprite = self.generateSprite(data, "???")
+    print("data is: ",data)
+    self.generateSprite(data, "???")
 
 
   
