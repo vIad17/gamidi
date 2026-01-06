@@ -1,7 +1,7 @@
 
 _started_time = -1000
 
-GAME_LENGTH = 1000 * 60 * 2
+GAME_LENGTH = 1000 * 60 * 0.1
 current_game_time = 0
 game_time_left = GAME_LENGTH
 
