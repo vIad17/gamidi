@@ -9,12 +9,12 @@ class shopEntry:
   unit_class=None #: Type[Unit] | None = None
 
 class ShopKnight(shopEntry):
-  cost = 4
+  cost = 1
   img_path = "Res/knights/unit_knight.png"
   unit_class = UKnight
 
 class ShopTower(shopEntry):
-    cost = 8          # примерная цена, подправь под баланс
+    cost = 2          # примерная цена, подправь под баланс
     img_path = "Res/knights/unit_tower.png"
     unit_class = UTower
 
@@ -24,12 +24,12 @@ class ShopLandman(shopEntry):
     unit_class = ULandman
 
 class ShopArcher(shopEntry):
-    cost = 5
+    cost = 3
     img_path = "Res/knights/unit_archer.png"
     unit_class = UArcher
 
 class ShopMage(shopEntry):
-   cost = 3
+   cost = 5
    img_path  = "Res/knights/unit_mage.png"
    unit_class = UMage
 

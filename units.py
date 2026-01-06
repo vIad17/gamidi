@@ -123,7 +123,7 @@ class UArrow(Unit):
   move_t = 600
   color = (180, 180, 180)
   MaxHP = 90000
-  Dmg = 1
+  Dmg = 2
   is_projectile = True
   
 
@@ -160,6 +160,8 @@ class UArrow(Unit):
           return True
 
 class UMagic(UArrow):
+  Dmg = 3
+
   def attackCheck(self, akai, t):
     for index, u in enumerate(units):
       if u.trySelect(self.x, self.y):
@@ -189,7 +191,10 @@ class UMagic(UArrow):
 class UKnight(Unit):
   Name ="knight"
   color = (60, 255, 255)
-  MaxHP = 3
+  MaxHP = 4
+  Dmg = 1
+  attack_t = 500
+  cost = 1
   sprite_path = "Res/knights/unit_knight.png"
 
 class UTower(Unit):
@@ -197,6 +202,7 @@ class UTower(Unit):
   color = (20, 35, 105)
   MaxHP = 10
   Dmg = 0
+  cost = 2
   sprite_path = "Res/knights/unit_tower.png"
 
 class ULandman(Unit):
@@ -204,14 +210,16 @@ class ULandman(Unit):
   color = (255, 255, 25)
   MaxHP = 1
   Dmg = 0
+  cost = 2
   sprite_path = "Res/knights/unit_landman.png"
 
 class UArcher(Unit):
   Name ="Archer"
   color = (30, 150, 30)
-  MaxHP = 3
+  MaxHP = 1
   Dmg = 0
-  attack_t = 4000
+  cost = 3
+  attack_t = 3500
   sprite_path = "Res/knights/unit_archer.png"
 
   def attackCheck(self, akai, t):
@@ -227,6 +235,7 @@ class UMage(Unit):
   color = (120, 30, 250)
   MaxHP = 3
   Dmg = 0
+  cost = 5
   attack_t = 6000
   sprite_path = "Res/knights/unit_mage.png"
 
@@ -273,7 +282,10 @@ class UAnt(Unit):
 class UBull(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 2000
+    MaxHP = 10
+    Dmg = 2
+    attack_t = 500
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_bull.png"
 
@@ -281,7 +293,10 @@ class UBull(Unit):
 class UDolphin(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 600
+    MaxHP = 1
+    Dmg = 3
+    attack_t = 1000
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_dolphin.png"
 
@@ -290,6 +305,9 @@ class UDragon(Unit):
     is_enemy = True
     do_move = True
     move_t = 3000
+    MaxHP = 20
+    Dmg = 3
+    attack_t = 800
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_dragon.png"
 
@@ -297,7 +315,10 @@ class UDragon(Unit):
 class UFireflies(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 400
+    MaxHP = 1
+    Dmg = 1
+    attack_t = 600
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_fireflies.png"
 
@@ -305,7 +326,10 @@ class UFireflies(Unit):
 class UFlame(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 1500
+    MaxHP = 2
+    Dmg = 1
+    attack_t = 300
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_flame.png"
 
@@ -313,7 +337,10 @@ class UFlame(Unit):
 class UFox(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 700
+    Hp = 1
+    Dmg = 1
+    attack_t = 400
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_fox.png"
 
@@ -321,7 +348,10 @@ class UFox(Unit):
 class UEye(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 800
+    MaxHP = 7
+    Dmg = 1
+    attack_t = 1500
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_eye.png"
 
@@ -330,6 +360,9 @@ class UJellyfish(Unit):
     is_enemy = True
     do_move = True
     move_t = 3000
+    MaxHP = 1
+    Dmg = 2
+    attack_t = 1700
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_jellyfish.png"
 
@@ -337,7 +370,10 @@ class UJellyfish(Unit):
 class USnake(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 1700
+    MaxHP = 1
+    Dmg = 5
+    attack_t = 1000
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_snake.png"
 
@@ -345,7 +381,10 @@ class USnake(Unit):
 class UTurtle(Unit):
     is_enemy = True
     do_move = True
-    move_t = 3000
+    move_t = 5000
+    MaxHP = 5
+    Dmg = 1
+    attack_t = 2000
     color = (255, 153, 0)
     sprite_path = "Res/enemies/IMG_turtle.png"
 
