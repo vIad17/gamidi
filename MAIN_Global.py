@@ -7,6 +7,9 @@ from Launchpad_Main import LaunchpadInit, LaunchpadMain
 from enemies_logic.Drawer import LaunchpadDrawerUpdate, LaunchpadDrawerInit, SpawnEnemy
 
 from colorama import init, Fore, Style
+
+import global_game_state as GameState
+
 init(autoreset=True)
 
 app = QCoreApplication([])
@@ -22,6 +25,8 @@ def MainGlobal():
   t_old = t
   t = time.time() * 1000
   dt = t-t_old
+
+  GameState.Update(t,dt)
   AkaiUpdate(t,dt)
   LaunchpadDrawerUpdate(t, dt)
 

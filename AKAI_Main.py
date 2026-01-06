@@ -8,6 +8,8 @@ from colorama import init as ColoramaINIT
 from colorama import Fore, Style
 ColoramaINIT(autoreset=True)
 
+import global_game_state as GameState
+
 
 akai = None
 
@@ -343,6 +345,8 @@ units.append(UGoblin(3, 2))
 units.append(UGoblin(3, 3))
 units.append(UTower(8, 3))
 
+
+
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
   global select_x, select_y, units, selected_unit
@@ -371,6 +375,11 @@ def AkaiUpdate(t, dt):
   akai.set_pad_color(15,2, 0, 255*(units_logic.castleHP/3),0)
   akai.set_pad_color(15,3, 0, 255*(units_logic.castleHP/3),0)
   DrawHpUpdate(units_logic.castleHP)
+
+  if(units_logic.castleHP<=0):
+    GameState.win_player_index = 0
+    GameState.is_game_end = True
+
 
 
   if(t-tAnimFrame > 40):

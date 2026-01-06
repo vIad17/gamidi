@@ -352,7 +352,11 @@ class UCustom(Unit):
   color = (255, 153, 0)
 
   def __init__(self, x, y, data):
+    # self.HP = self.MaxHP
+    # self.x = x
+    # self.y = y
     super().__init__(x, y)
+    # print("data is: ",data)
     self.AKAI_Sprite = self.generateSprite(data, "???")
 
 
@@ -371,4 +375,5 @@ unit_classes: dict[str, Type[Unit]] = {
     "Jellyfish": UJellyfish,
     "Snake": USnake,
     "Turtle": UTurtle,
+    "Custom": UCustom
 }
