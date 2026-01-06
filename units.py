@@ -249,19 +249,25 @@ class UGoblin(Unit):
   sprite_path = "Res/knights/unit_knight.png"
 
 class UAmogus(Unit):
-    is_enemy = True
-    do_move = True
-    move_t = 3000
-    color = (255, 0, 0)
-    sprite_path = "Res/enemies/IMG_Amogus.png"
+  is_enemy = True
+  do_move = True
+  move_t = 1000
+  Dmg = 1
+  MaxHP = 4
+  attack_t = 2000
+  color = (255, 0, 0)
+  sprite_path = "Res/enemies/IMG_Amogus.png"
 
 
 class UAnt(Unit):
-    is_enemy = True
-    do_move = True
-    move_t = 3000
-    color = (255, 153, 0)
-    sprite_path = "Res/enemies/IMG_ant.png"
+  is_enemy = True
+  do_move = True
+  move_t = 1100
+  Dmg = 1
+  MaxHP = 2
+  attack_t = 400
+  color = (255, 153, 0)
+  sprite_path = "Res/enemies/IMG_ant.png"
 
 
 class UBull(Unit):

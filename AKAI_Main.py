@@ -261,6 +261,7 @@ def on_grid_button(is_pressed, dir):
 
 def on_bank_button(is_pressed):
   pressed_log_string(is_pressed, "Bank")
+  GameState.restart()
 
 def on_mute_button(is_pressed, ind):
   pressed_log_string(is_pressed, f"Mute {ind}")
