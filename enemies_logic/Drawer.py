@@ -56,6 +56,13 @@ def IdToIndex(id : int):
 def IndexToId(index : int):
   return (8 - index//8) * 10 + index%8 +1
 
+def LaunchpadRestart():
+  global drawing_array, moving_line, current_enemy
+  drawing_array.clear()
+  moving_line = -1
+  current_enemy = default_enemy
+  LaunchpadDrawerInit()
+  
 def LaunchpadDrawerInit():
   global lp
   lp = GetLP()
@@ -67,18 +74,19 @@ def LaunchpadDrawerInit():
   lp.LedCtrlXYByRGB(8, 8, COLOR_WHITE)
 
 def LaunchpadDrawerUpdate(t, dt):
-  # print(t, dt)
   global lp, current_enemy, default_enemy, moving_line
+  
+  lp = GetLP()
+  input = lp.ButtonStateRaw()
   
   if GameState.is_game_end:
     if GameState.win_player_index == 0:
       Win()
     else:
       GameOver()
+    _HandleGameEndInputs(input)
     return
   
-  lp = GetLP()
-  input = lp.ButtonStateRaw()
   _HandleInputs(input)
 
   if _IsEnemyReady() and moving_line != -1:
@@ -129,6 +137,20 @@ def _Draw(input):
           # for idx in drawing_array:
           #   # lp.LedCtrlXYByRGB(idx % 8, idx // 8 + 1, enemy["color"])
           #   lp.LedCtrlPulseXYByCode(idx % 8, idx // 8 + 1, 12)
+
+def _HandleGameEndInputs(input):
+  global lp
+  
+  if input == []:
+    return
+  
+  lp.LedCtrlFlashByCode(BUTTON_CLEAR, 100)
+  
+  if input[0] == BUTTON_CLEAR:
+    LaunchpadRestart()
+    #TODO: do restart
+  
+  
 
 def _HandleInputs(input):
   global lp, drawing_array, current_enemy, drawing_array, moving_line
