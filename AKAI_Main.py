@@ -345,7 +345,21 @@ units.append(UGoblin(3, 2))
 units.append(UGoblin(3, 3))
 units.append(UTower(8, 3))
 
+def AkaiRestart():
+  global select_x, select_y, units, selected_unit
+  global mana_value, last_mana_t
+  global is_placing_unit, is_shop_open, shop_items, shop_item_i
 
+  for u in units:
+    units.remove(u)
+    del(u)
+  mana_value = 0
+  last_mana_t = 0
+  is_placing_unit = False
+  is_shop_open = False
+  shop_item_i = 0
+  selected_unit = None
+  units_logic.castleHP = 3
 
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
@@ -386,6 +400,10 @@ def AkaiUpdate(t, dt):
     tAnimFrame = t
     anim_i=((anim_i+1)%6572)+1
 
+  current_game_t = math.floor(GameState.current_game_time/GameState.GAME_LENGTH*3)
+  akai.set_preset_led(current_game_t)
+
+  # print(GameState.current_game_time)
     
     # IMG_DrawProgress(img, val=(anim_i%100)/99, border=1, y= 40)
     # IMG_DrawText(img, "Test string", 5, 20)
@@ -414,5 +432,9 @@ def AkaiUpdate(t, dt):
     pass
     # akai.set_pad_color(select_x,select_y, 0,0,0)
 
+  if(GameState.is_game_end):
+    img = IMG_empty(False)
+    IMG_DrawText(img, ("Вы победили!" if GameState.win_player_index == 1 else "Вы проиграли."), 5, 15)
+  
   OLED_DRAW_IMG(img)
 
