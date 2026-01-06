@@ -261,7 +261,8 @@ def on_grid_button(is_pressed, dir):
 
 def on_bank_button(is_pressed):
   pressed_log_string(is_pressed, "Bank")
-  GameState.restart()
+  if(is_pressed):
+    GameState.restart()
 
 def on_mute_button(is_pressed, ind):
   pressed_log_string(is_pressed, f"Mute {ind}")
@@ -350,10 +351,9 @@ def AkaiRestart():
   global select_x, select_y, units, selected_unit
   global mana_value, last_mana_t
   global is_placing_unit, is_shop_open, shop_items, shop_item_i
-
   for u in units:
-    units.remove(u)
     del(u)
+  units.clear()
   mana_value = 0
   last_mana_t = 0
   is_placing_unit = False
@@ -361,6 +361,7 @@ def AkaiRestart():
   shop_item_i = 0
   selected_unit = None
   units_logic.castleHP = 3
+  akai.clear_all_pads()
 
 def AkaiUpdate(t, dt):
   global i, tPadUpd, tAnimFrame, anim_i, akai
